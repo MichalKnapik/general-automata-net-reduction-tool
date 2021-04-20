@@ -1,1 +1,2 @@
-# general-automata-net-reduction-tool
+# A prototype of a tool for reducing networks of automata
+
