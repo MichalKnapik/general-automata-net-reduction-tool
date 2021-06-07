@@ -7,21 +7,45 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+import picocli.CommandLine.Spec;
+import picocli.CommandLine.Model.CommandSpec;
+import picocli.CommandLine.ParameterException;
 
-@Command(name = "gsprod.GSQ", mixinStandardHelpOptions = true, version = "0.1", description = "General square product reduction prototype (2021).")
+@Command(name = "gsprod.GSQ", mixinStandardHelpOptions = true, version = "0.1", usageHelpWidth = 200,
+        description = "General square product reduction prototype (2021).")
 public class GSQ implements Callable<Integer> {
 
-    @Parameters(arity = "1", index = "0", description = "The file with names of synchronizing actions.")
+    @Parameters(arity = "0..1", index = "0", description = "The file with names of synchronizing actions. Unused when running random experiments.")
     private String actionFile;
 
-    @Parameters(arity = "1", index = "1..*", description = "The file with names of synchronizing actions.")
+    @Parameters(arity = "0..1", index = "1..*", description = "The file with names of synchronizing actions. Unused when running random experiments.")
     private String[] modelFiles;
 
-    @Option(names = "-v", description = "Verbose: if true then will output all models to stdout.")
+    @Option(names = {"-v", "--verbose"}, description = "Verbose: if true then output all models to stdout.")
     boolean verbose;
 
+    @Option(names = "-r", arity = "3", hideParamSyntax = true, paramLabel = "minbf maxbf depth",
+            description = "Random experiment parameters. A random synchronization tree of a given depth " +
+            "is created in such a way that every inner node has a number of children uniformly chosen from [minbf,maxbf].")
+    int[] randomOptions;
+
+    @Spec CommandSpec spec;
+
     public Integer call() throws Exception {
+
         AutomataNet nr = new AutomataNet();
+
+        if (actionFile == null && randomOptions == null) {
+            throw new ParameterException(spec.commandLine(), "Please provide either input files or random experiment parameters.");
+        }
+
+        // running a random experiment
+        if (randomOptions != null) {
+            // todo
+        }
+
+        if (actionFile == null) return 0;
+        // running synchronisation on provided files
 
         if (verbose) System.out.println("Read from " + this.actionFile + " synchronizing actions:");
         nr.readActions(this.actionFile);
@@ -47,7 +71,7 @@ public class GSQ implements Callable<Integer> {
 
         System.out.println("*** Product's stats: ***\n" + "states count: " + product.getStates().size()
                 + "\ntransition count: " + product.countTransitions());
-        System.out.println("*** Done. **");
+        System.out.println("*** Done. ***");
 
         return 0;
     }

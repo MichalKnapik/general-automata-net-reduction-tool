@@ -2,13 +2,13 @@ package gsprod;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 public class AutomataNet {
 
-    private HashSet<String> actions;
+    private LinkedHashSet<String> actions;
     private ArrayList<Automaton> automata;
-    public HashSet<String> getActions() {
+    public LinkedHashSet<String> getActions() {
         return this.actions;
     }
     public ArrayList<Automaton> getAutomata() {
@@ -16,7 +16,7 @@ public class AutomataNet {
     }
 
     public AutomataNet() {
-        this.actions = new HashSet<>();
+        this.actions = new LinkedHashSet<>();
         this.automata = new ArrayList<>();
     }
 

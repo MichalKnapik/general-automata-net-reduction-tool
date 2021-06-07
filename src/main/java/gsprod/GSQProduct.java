@@ -1,17 +1,17 @@
 package gsprod;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
 
 public class GSQProduct {
 
-    public static Automaton singleLevelProduct(Automaton root, ArrayList<Automaton> children, HashSet<String> syncActions, boolean verbose) {
+    public static Automaton singleLevelProduct(Automaton root, ArrayList<Automaton> children, LinkedHashSet<String> syncActions, boolean verbose) {
         if (verbose) {
-            System.out.println("reducing the subtree of " + root.getName() + " with children (statespace size, no of transitions):");
-            for (Automaton child: children) {
-                System.out.println(child.getStates().size() + ", " + child.countTransitions());
-            }
+            System.out.print("reducing the subtree of " + root.getName() + " with children (statespace size, no of transitions): ");
+            for (Automaton child: children)
+                System.out.print("(" + child.getStates().size() + ", " + child.countTransitions()+  ") ");
+            System.out.println();
         }
         if (children == null) return root;
 
@@ -43,7 +43,7 @@ public class GSQProduct {
 
             // fire all the local actions of the child
             ArrayList<Transition> enabledChildTransitions = child.getStateToTransitions().get(currState.getActiveChildState());
-            HashSet<String> localChildTransLabels = child.getLocalActions(syncActions, root);
+            LinkedHashSet<String> localChildTransLabels = child.getLocalActions(syncActions, root);
 
             for (Transition trans: enabledChildTransitions) {
                 if (localChildTransLabels.contains(trans.getLabel())) {
@@ -63,7 +63,7 @@ public class GSQProduct {
 
             // fire all the local actions of the root and synchronized ones
             ArrayList<Transition> enabledRootTransitions = root.getStateToTransitions().get(currState.getRootState());
-            HashSet<String> localRootTransLabels = root.getLocalActions(syncActions, children);
+            LinkedHashSet<String> localRootTransLabels = root.getLocalActions(syncActions, children);
 
             for (Transition rootTrans: enabledRootTransitions) {
 
@@ -122,7 +122,7 @@ public class GSQProduct {
     /**
      * Returns the subset of the children that share a common action with the root and are not equal to the root.
      */
-    public static ArrayList<Automaton> discoverChildren(Automaton root, ArrayList<Automaton> children, HashSet<String> syncActions) {
+    public static ArrayList<Automaton> discoverChildren(Automaton root, ArrayList<Automaton> children, LinkedHashSet<String> syncActions) {
         ArrayList<Automaton> syncChildren = new ArrayList<>();
         for (Automaton child: children)
             if (child != root && !root.getSyncActions(syncActions, child).isEmpty()) syncChildren.add(child);
@@ -134,7 +134,7 @@ public class GSQProduct {
      * Computes general square product. Note - it's up to you to ensure that the structure of the automata net is tree-like.
      * If there are cycles, then this will loop into infinity. It is also assumed that the root is not present in children.
      */
-    public static Automaton generalSquareProduct(Automaton root, ArrayList<Automaton> children, HashSet<String> syncActions, boolean verbose) {
+    public static Automaton generalSquareProduct(Automaton root, ArrayList<Automaton> children, LinkedHashSet<String> syncActions, boolean verbose) {
         ArrayList<Automaton> syncChildren = GSQProduct.discoverChildren(root, children, syncActions);
         if (syncChildren.isEmpty()) return root;
 

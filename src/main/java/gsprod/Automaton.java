@@ -2,14 +2,14 @@ package gsprod;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
 
 public class Automaton {
 
     private String name;
     private ArrayList<String> states;
-    private HashSet<String> actionLabels;
+    private LinkedHashSet<String> actionLabels;
     private boolean automataMarking;
     private String initial;
     private HashMap<String, ArrayList<Transition>> stateToTransitions;
@@ -22,7 +22,7 @@ public class Automaton {
         this.stateMarkings = new HashMap<>();
         this.resetStateMarkings();
 
-        this.actionLabels = new HashSet<>();
+        this.actionLabels = new LinkedHashSet<>();
         this.stateToTransitions = new HashMap<>();
         for (Transition tran: transitions) this.addTransition(tran);
 
@@ -31,14 +31,18 @@ public class Automaton {
 
     public Automaton() {
         this.states = new ArrayList<>();
-        this.stateMarkings = new HashMap<String, Boolean>();
-        this.actionLabels = new HashSet<>();
+        this.stateMarkings = new HashMap<>();
+        this.actionLabels = new LinkedHashSet<>();
         this.stateToTransitions = new HashMap<>();
         this.name = Integer.toString(++ctr);
     }
 
     public String getName() {
         return name;
+    }
+
+    public static void resetAutomataCounter() {
+        ctr = 0;
     }
 
     public ArrayList<String> getStates() {
@@ -54,7 +58,7 @@ public class Automaton {
         return this.states.get(0);
     }
 
-    public HashSet<String> getActionLabels() {
+    public LinkedHashSet<String> getActionLabels() {
         return actionLabels;
     }
 
@@ -111,7 +115,7 @@ public class Automaton {
             this.markState(currState);
         }
 
-        this.states = (ArrayList<String>) this.states.stream().filter(state -> this.isStateMarked(state)).collect(Collectors.toList());
+        this.states = (ArrayList<String>) this.states.stream().filter(this::isStateMarked).collect(Collectors.toList());
 
         HashMap<String, ArrayList<Transition>> stateToTransitionsPruned = new HashMap<>();
         for (String state: this.getStates()) {
@@ -181,9 +185,9 @@ public class Automaton {
     /**
      * Computes and returns those actions of this automaton that either do not belong to syncActions or are known to the other gsprod.Automaton.
      */
-    public HashSet<String> getLocalActions(HashSet<String> syncActions, Automaton other) {
-        HashSet<String> othersActions = new HashSet<>(other.getActionLabels());
-        HashSet<String> localActions = new HashSet<>(this.getActionLabels());
+    public LinkedHashSet<String> getLocalActions(LinkedHashSet<String> syncActions, Automaton other) {
+        LinkedHashSet<String> othersActions = new LinkedHashSet<>(other.getActionLabels());
+        LinkedHashSet<String> localActions = new LinkedHashSet<>(this.getActionLabels());
         othersActions.retainAll(syncActions);
         localActions.removeAll(othersActions);
 
@@ -193,11 +197,11 @@ public class Automaton {
     /**
      * Computes and returns those actions of this automaton that either do not belong to syncActions or are known to any other gsprod.Automaton.
      */
-    public HashSet<String> getLocalActions(HashSet<String> syncActions, ArrayList<Automaton> others) {
-        HashSet<String> othersActions = others.stream().map(Automaton::getActionLabels)
-                                                       .reduce(new HashSet<String>(), (subtotal, elt) ->
+    public LinkedHashSet<String> getLocalActions(LinkedHashSet<String> syncActions, ArrayList<Automaton> others) {
+        LinkedHashSet<String> othersActions = others.stream().map(Automaton::getActionLabels)
+                                                       .reduce(new LinkedHashSet<>(), (subtotal, elt) ->
                                                                { subtotal.addAll(elt); return subtotal;});
-        HashSet<String> localActions = new HashSet<>(this.getActionLabels());
+        LinkedHashSet<String> localActions = new LinkedHashSet<>(this.getActionLabels());
         othersActions.retainAll(syncActions);
         localActions.removeAll(othersActions);
 
@@ -208,9 +212,9 @@ public class Automaton {
     /**
      * Computes and returns those actions of this automaton that belong to syncActions and are known to the other gsprod.Automaton.
      */
-    public HashSet<String> getSyncActions(HashSet<String> syncActions, Automaton other) {
-        HashSet<String> localActions = new HashSet<>(this.getActionLabels());
-        HashSet<String> othersActions = new HashSet<>(other.getActionLabels());
+    public LinkedHashSet<String> getSyncActions(LinkedHashSet<String> syncActions, Automaton other) {
+        LinkedHashSet<String> localActions = new LinkedHashSet<>(this.getActionLabels());
+        LinkedHashSet<String> othersActions = new LinkedHashSet<>(other.getActionLabels());
         othersActions.retainAll(syncActions);
         localActions.retainAll(othersActions);
 
