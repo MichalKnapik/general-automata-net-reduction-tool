@@ -24,9 +24,10 @@ public class GSQ implements Callable<Integer> {
     @Option(names = {"-v", "--verbose"}, description = "Verbose: if true then output all models to stdout.")
     boolean verbose;
 
-    @Option(names = "-r", arity = "3", hideParamSyntax = true, paramLabel = "minbf maxbf depth",
+    @Option(names = "-r", arity = "5", hideParamSyntax = true, paramLabel = "minbf maxbf minautsize maxautsize depth",
             description = "Random experiment parameters. A random synchronization tree of a given depth " +
-            "is created in such a way that every inner node has a number of children uniformly chosen from [minbf,maxbf].")
+            "is created in such a way that every inner node has a number of children uniformly chosen from [minbf,maxbf] " +
+            "and the number of states of each generated automaton is in [minautsize, maxautsize].")
     int[] randomOptions;
 
     @Spec CommandSpec spec;
@@ -41,7 +42,13 @@ public class GSQ implements Callable<Integer> {
 
         // running a random experiment
         if (randomOptions != null) {
-            // todo
+            int minbf = randomOptions[0];
+            int maxbf = randomOptions[1];
+            int depth = randomOptions[2];
+            int minautsize = randomOptions[3];
+            int maxautsize = randomOptions[4];
+            //todo
+
         }
 
         if (actionFile == null) return 0;

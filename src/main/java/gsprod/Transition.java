@@ -1,6 +1,6 @@
 package gsprod;
 
-public class Transition {
+public class Transition implements Comparable {
 
     private String source;
     private String label;
@@ -26,5 +26,18 @@ public class Transition {
 
     public String toString() {
         return String.format("%s -(%s)-> %s", this.source, this.label, this.target);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Transition trans = (Transition) o;
+        return this.toString().compareTo(trans.toString());
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || this.getClass() != object.getClass()) return false;
+        return object.toString().equals(this.toString());
     }
 }
