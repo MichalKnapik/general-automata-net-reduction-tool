@@ -17,18 +17,11 @@ public class RandomAutomatonGenerator {
      */
     private static double chooseSynchTransProbability = 0.5;
 
-    /**
-     * A technical detail: after the initial graph-building the program will run for this many steps adding transitions
-     * between existing nodes.
-     */
-    private static int closingTrans = 10;
-
     private static String tau = "tau";
 
-    public static void setExplorationAndSynchronizationProbabilities(double explP, double synchP, int closingTransS) {
+    public static void setExplorationAndSynchronizationProbabilities(double explP, double synchP) {
         exploreNewProbability = explP;
         chooseSynchTransProbability = synchP;
-        closingTrans = closingTransS;
     }
 
     private int minAutoSize;
@@ -40,7 +33,11 @@ public class RandomAutomatonGenerator {
     }
 
     public Automaton generate(LinkedHashSet<String> syncActions) {
+        // this might need a rewrite
         Random rng = new Random();
+
+        HashMap<String, Boolean> usedAct = new HashMap<>();
+        for (String action: syncActions) usedAct.put(action, false);
 
         String[] syncActsArray = new String[syncActions.size()];
         syncActsArray = syncActions.toArray(syncActsArray);
@@ -60,22 +57,25 @@ public class RandomAutomatonGenerator {
             else nextState = Integer.toString(rng.nextInt(ctr));
 
             // choose a proper label for the generated transition
-            if (rng.nextDouble() < chooseSynchTransProbability && syncActsArray.length != 0)
-                transLabel = syncActsArray[rng.nextInt(syncActsArray.length)];
+            if (rng.nextDouble() < chooseSynchTransProbability && syncActsArray.length != 0) {
+                String newLabel = syncActsArray[rng.nextInt(syncActsArray.length)];
+                usedAct.put(newLabel, true);
+                transLabel = newLabel;
+            }
 
             transitions.add(new Transition(currState, transLabel, nextState));
-
         }
 
-        // now, add some more random transitions
-        for (int i=0; i < closingTrans; ++i) {
+        // now, add some more random transitions is there is a transition label that hasn't been used
+        while (usedAct.entrySet().stream().anyMatch(e -> !e.getValue())) {
             String currState = Integer.toString(rng.nextInt(noOfStates));
             String nextState = Integer.toString(rng.nextInt(noOfStates));
             String transLabel = tau;
 
-            if (rng.nextDouble() < chooseSynchTransProbability && syncActsArray.length != 0)
+            if (rng.nextDouble() < chooseSynchTransProbability) {
                 transLabel = syncActsArray[rng.nextInt(syncActsArray.length)];
-
+                usedAct.put(transLabel, true);
+            }
             transitions.add(new Transition(currState, transLabel, nextState));
         }
 
