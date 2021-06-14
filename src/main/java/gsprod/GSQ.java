@@ -34,48 +34,47 @@ public class GSQ implements Callable<Integer> {
 
     public Integer call() throws Exception {
 
-        AutomataNet nr = new AutomataNet();
-
         if (actionFile == null && randomOptions == null) {
             throw new ParameterException(spec.commandLine(), "Please provide either input files or random experiment parameters.");
         }
 
-        // running a random experiment
+        AutomataNet nr = null;
+
         if (randomOptions != null) {
+            // *** running a random experiment ***
             int minbf = randomOptions[0];
             int maxbf = randomOptions[1];
             int minautsize = randomOptions[2];
             int maxautsize = randomOptions[3];
             int depth = randomOptions[4];
 
-            AutomataNet net = RandomNetGenerator.DFSNetGen(minbf, maxbf, depth, minautsize, maxautsize);
+            nr = RandomNetGenerator.DFSNetGen(minbf, maxbf, depth, minautsize, maxautsize);
             System.out.println(String.format("** I have generated a random automata network with branching factor in [%d %d], " +
-                    "automaton size in [%d %d] and depth %d **\n", minbf, maxbf, minautsize, maxautsize, depth));
-            if (verbose) System.out.println("** I have generated a random automata network: **" + net);
+                    "automaton size in [%d %d] and depth %d **", minbf, maxbf, minautsize, maxautsize, depth));
+            if (verbose) System.out.println(nr);
+        } else {
+            // *** reading actions and automata from files ***
+            nr = new AutomataNet();
 
-            return 0;
+            // running synchronisation on provided files
+            if (verbose) System.out.println("Read from " + this.actionFile + " synchronizing actions:");
+            nr.readActions(this.actionFile);
+            if (verbose) for (String actName : nr.getActions()) System.out.println(actName);
+
+            if (verbose) System.out.println("Reading models.");
+            for (String modelFile : this.modelFiles) {
+                Automaton model = nr.readAutomaton(modelFile);
+                if (verbose) System.out.println("Read from " + modelFile + " " + model);
+            }
+
+            // select the first automaton as the root and the the rest as the children
+            Automaton root = nr.getAutomata().get(0);
+            ArrayList<Automaton> children = new ArrayList<>();
+            for (int i = 1; i < this.modelFiles.length - 1; ++i) children.add(nr.getAutomata().get(i));
         }
 
-        if (actionFile == null) return 0;
-
-        // running synchronisation on provided files
-        if (verbose) System.out.println("Read from " + this.actionFile + " synchronizing actions:");
-        nr.readActions(this.actionFile);
-        if (verbose) for (String actName: nr.getActions()) System.out.println(actName);
-
-        if (verbose) System.out.println("Reading models.");
-        for (String modelFile: this.modelFiles) {
-            Automaton model = nr.readAutomaton(modelFile);
-            if (verbose) System.out.println("Read from " + modelFile + " " + model);
-        }
-
-        // select the first automaton as the root, the rest as the children and run the reduction
-
-        Automaton root = nr.getAutomata().get(0);
-        ArrayList<Automaton> children = new ArrayList<>();
-        for (int i = 1; i < this.modelFiles.length-1; ++i) children.add(nr.getAutomata().get(i));
-
-        Automaton product = GSQProduct.generalSquareProduct(root, children, nr.getActions(), verbose);
+        // run the reduction
+        Automaton product = GSQProduct.generalSquareProduct(nr, verbose);
 
         if (verbose) {
             System.out.println(">> The computed product is " + product);
@@ -85,7 +84,7 @@ public class GSQ implements Callable<Integer> {
                 + "\ntransition count: " + product.countTransitions());
         System.out.println("*** Done. ***");
 
-        return 0;
+        return 0;                           
     }
 
     public static void main(String[] args) {

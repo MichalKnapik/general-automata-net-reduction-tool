@@ -151,4 +151,12 @@ public class GSQProduct {
         return product;
     }
 
+    public static Automaton generalSquareProduct(AutomataNet net, boolean verbose) {
+        Automaton root = net.getAutomata().get(0);
+        ArrayList<Automaton> children = new ArrayList<>();
+        for (int i = 1; i < net.getAutomata().size(); ++i) children.add(net.getAutomata().get(i));
+
+        return generalSquareProduct(root, children, net.getActions(), verbose);
+    }
+
 }
