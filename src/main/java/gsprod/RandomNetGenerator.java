@@ -28,7 +28,7 @@ public class RandomNetGenerator {
         RandomAutomatonGenerator gen = new RandomAutomatonGenerator(minAutoSize, maxAutoSize);
         Random rng = new Random();
         AutomataNet net = new AutomataNet();
-        DFSNetGen("", minBranchingFactor, maxBranchingFactor, depth, gen, net, rng);
+        DFSNetGen("a", minBranchingFactor, maxBranchingFactor, depth, gen, net, rng);
 
         return net;
     }

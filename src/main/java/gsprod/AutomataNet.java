@@ -77,6 +77,7 @@ public class AutomataNet {
         sttok.ordinaryChars('0', '9');
         sttok.wordChars('0', '9');
         sttok.wordChars('_', '_');
+
         return sttok;
     }
 
@@ -85,14 +86,17 @@ public class AutomataNet {
             if (sttok.sval == null) continue;
             return sttok.sval;
         }
+
         return null;
     }
 
     public String toString() {
-        String str = "A network of automata:";
-        for (Automaton automaton: this.getAutomata()) str += "\n" + automaton.toString();
+        String str = "** A network of automata:";
+        for (Automaton automaton: this.getAutomata()) str += "\n>>" + automaton.toString();
+        str += "\n** with registered sync actions: " + this.getActions().stream().reduce("",
+                (p, t) -> p + (p.length()>0 ? ", " : "") + t);
 
-        return str;
+        return str+".";
     }
 
 }
