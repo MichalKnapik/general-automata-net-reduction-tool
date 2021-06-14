@@ -44,16 +44,21 @@ public class GSQ implements Callable<Integer> {
         if (randomOptions != null) {
             int minbf = randomOptions[0];
             int maxbf = randomOptions[1];
-            int depth = randomOptions[2];
-            int minautsize = randomOptions[3];
-            int maxautsize = randomOptions[4];
-            //todo
+            int minautsize = randomOptions[2];
+            int maxautsize = randomOptions[3];
+            int depth = randomOptions[4];
 
+            AutomataNet net = RandomNetGenerator.DFSNetGen(minbf, maxbf, depth, minautsize, maxautsize);
+            System.out.println(String.format("** I have generated a random automata network with branching factor in [%d %d], " +
+                    "automaton size in [%d %d] and depth %d **\n", minbf, maxbf, minautsize, maxautsize, depth));
+            if (verbose) System.out.println("** I have generated a random automata network: **" + net);
+
+            return 0;
         }
 
         if (actionFile == null) return 0;
-        // running synchronisation on provided files
 
+        // running synchronisation on provided files
         if (verbose) System.out.println("Read from " + this.actionFile + " synchronizing actions:");
         nr.readActions(this.actionFile);
         if (verbose) for (String actName: nr.getActions()) System.out.println(actName);
