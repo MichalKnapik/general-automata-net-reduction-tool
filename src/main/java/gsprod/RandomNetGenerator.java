@@ -2,6 +2,7 @@ package gsprod;
 
 import java.util.LinkedHashSet;
 import java.util.Random;
+import java.util.Scanner;
 
 public class RandomNetGenerator {
 
@@ -31,4 +32,22 @@ public class RandomNetGenerator {
 
         return net;
     }
+
+    public static void main(String[] args) {
+        Scanner myInput = new Scanner(System.in);
+        int minStates, maxStates, minBranch, maxBranch, depth;
+        System.out.println("Min st. size: ");
+        minStates = myInput.nextInt();
+        System.out.println("Max st. size: ");
+        maxStates = myInput.nextInt();
+        System.out.println("Min branching factor: ");
+        minBranch = myInput.nextInt();
+        System.out.println("Max branching factor: ");
+        maxBranch = myInput.nextInt();
+        System.out.println("Depth: ");
+        depth = myInput.nextInt();
+
+        System.out.println(DFSNetGen(minBranch, maxBranch, depth, minStates, maxStates));
+    }
+
 }

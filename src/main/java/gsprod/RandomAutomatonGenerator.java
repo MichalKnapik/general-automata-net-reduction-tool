@@ -81,26 +81,9 @@ public class RandomAutomatonGenerator {
 
         ArrayList<String> states = IntStream.range(0, noOfStates).boxed().map(String::valueOf).collect(
                 Collectors.toCollection(ArrayList::new));
-        System.out.println(states);
         ArrayList<Transition> transitionsF = transitions.stream().collect(Collectors.toCollection(ArrayList::new));
 
         return new Automaton(states, transitionsF);
-    }
-
-    public static void main(String[] args) {
-        Scanner myInput = new Scanner(System.in);
-        int minStates, maxStates;
-        System.out.println("Min st. size: ");
-        minStates = myInput.nextInt();
-        System.out.println("Max st. size: ");
-        maxStates = myInput.nextInt();
-
-        LinkedHashSet<String> syncActions = new LinkedHashSet<String>();
-        syncActions.add("one");
-        syncActions.add("two");
-        syncActions.add("thwee");
-        RandomAutomatonGenerator rag = new RandomAutomatonGenerator(minStates, maxStates);
-        System.out.println(rag.generate(syncActions));
     }
 
 }

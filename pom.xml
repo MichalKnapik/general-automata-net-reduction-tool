@@ -49,7 +49,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>gsprod.RandomAutomatonGenerator</mainClass>
+              <mainClass>gsprod.RandomNetGenerator</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
