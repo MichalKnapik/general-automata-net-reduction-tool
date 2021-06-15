@@ -36,6 +36,7 @@ public class RandomAutomatonGenerator {
 
     public Automaton generate(LinkedHashSet<String> syncActions) {
         // this might need a rewrite
+        // note: the first action of syncActions is treated as the (only) reset action is liveReset is set
         Random rng = new Random();
 
         HashMap<String, Boolean> usedAct = new HashMap<>();
@@ -47,16 +48,13 @@ public class RandomAutomatonGenerator {
         HashSet<Transition> transitions = new HashSet<>();
 
         int ctr = 1;
-        while (ctr < noOfStates) {
+        String init = "1";
+        while (ctr <= noOfStates) {
 
             // choose a random state from already existing and reachable
-            String currState = Integer.toString(rng.nextInt(ctr));
+            String currState = Integer.toString(rng.nextInt(ctr) + 1);
             String nextState;
             String transLabel = tau;
-
-            // generate a new state or connect to some earlier state
-            if (rng.nextDouble() < exploreNewProbability) nextState = Integer.toString(ctr++);
-            else nextState = Integer.toString(rng.nextInt(ctr));
 
             // choose a proper label for the generated transition
             if (rng.nextDouble() < chooseSynchTransProbability && syncActsArray.length != 0) {
@@ -65,13 +63,21 @@ public class RandomAutomatonGenerator {
                 transLabel = newLabel;
             }
 
+            // generate a new state or connect to some earlier state
+            if (this.liveReset && syncActsArray.length > 0 && transLabel.equals(syncActsArray[0])) { // resetting action
+                nextState = init;
+            } else { // other actions
+                if (rng.nextDouble() < exploreNewProbability) nextState = Integer.toString(ctr++);
+                else nextState = Integer.toString(rng.nextInt(ctr) + 1);
+            }
+
             transitions.add(new Transition(currState, transLabel, nextState));
         }
 
         // now, add some more random transitions is there is a transition label that hasn't been used
         while (usedAct.entrySet().stream().anyMatch(e -> !e.getValue())) {
-            String currState = Integer.toString(rng.nextInt(noOfStates));
-            String nextState = Integer.toString(rng.nextInt(noOfStates));
+            String currState = Integer.toString(rng.nextInt(noOfStates) + 1);
+            String nextState = Integer.toString(rng.nextInt(noOfStates) + 1);
             String transLabel = tau;
 
             if (rng.nextDouble() < chooseSynchTransProbability) {
@@ -81,8 +87,7 @@ public class RandomAutomatonGenerator {
             transitions.add(new Transition(currState, transLabel, nextState));
         }
 
-        ArrayList<String> states = IntStream.range(0, noOfStates).boxed().map(String::valueOf).collect(
-                Collectors.toCollection(ArrayList::new));
+        ArrayList<String> states = IntStream.range(1, noOfStates + 1).boxed().map(String::valueOf).collect(Collectors.toCollection(ArrayList::new));
         ArrayList<Transition> transitionsF = transitions.stream().collect(Collectors.toCollection(ArrayList::new));
 
         return new Automaton(states, transitionsF);
