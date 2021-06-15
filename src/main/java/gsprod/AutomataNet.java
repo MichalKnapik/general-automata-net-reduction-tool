@@ -124,7 +124,7 @@ public class AutomataNet {
 
                 // don't change commas or anything below or external tool won't parse it
                 for (Transition trans: transitions)
-                    System.out.println("(" + trans.getSource() + ", " + trans.getLabel() + " ," + trans.getTarget()+")");
+                    autoWriter.write("(" + trans.getSource() + ", " + trans.getLabel() + " ," + trans.getTarget()+")\n");
 
                 autoWriter.close();
             }
