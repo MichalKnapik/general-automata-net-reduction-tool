@@ -25,8 +25,9 @@ public class RandomNetGenerator {
                 DFSNetGen(deeperPrefix, minBranchingFactor, maxBranchingFactor, depth - 1, gen, net, rng);
     }
 
-    public static AutomataNet DFSNetGen(int minBranchingFactor, int maxBranchingFactor, int depth, int minAutoSize, int maxAutoSize) {
-        RandomAutomatonGenerator gen = new RandomAutomatonGenerator(minAutoSize, maxAutoSize);
+    public static AutomataNet DFSNetGen(int minBranchingFactor, int maxBranchingFactor, int depth,
+                                        int minAutoSize, int maxAutoSize, boolean liveReset) {
+        RandomAutomatonGenerator gen = new RandomAutomatonGenerator(minAutoSize, maxAutoSize, liveReset);
         Random rng = new Random();
         AutomataNet net = new AutomataNet();
         DFSNetGen("a", minBranchingFactor, maxBranchingFactor, depth, gen, net, rng);

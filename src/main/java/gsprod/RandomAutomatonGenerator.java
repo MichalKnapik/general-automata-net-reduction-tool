@@ -26,10 +26,12 @@ public class RandomAutomatonGenerator {
 
     private int minAutoSize;
     private int maxAutosize;
+    private boolean liveReset;
 
-    public RandomAutomatonGenerator(int minAutoSize, int maxAutosize) {
+    public RandomAutomatonGenerator(int minAutoSize, int maxAutosize, boolean liveReset) {
         this.minAutoSize = minAutoSize;
         this.maxAutosize = maxAutosize;
+        this.liveReset = liveReset;
     }
 
     public Automaton generate(LinkedHashSet<String> syncActions) {

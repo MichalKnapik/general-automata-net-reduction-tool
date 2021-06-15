@@ -27,6 +27,9 @@ public class GSQ implements Callable<Integer> {
     @Option(names = {"-o", "--only-dump"}, description = "Only dump the model files, don't reduce (works only with -d).")
     boolean dumpOnly;
 
+    @Option(names = {"-l", "--live-reset"}, description = "Generate live-reset automata, don't reduce (works only with -d).")
+    boolean liveReset;
+
     @Option(names = "-r", arity = "5", hideParamSyntax = true, paramLabel = "minbf maxbf minautsize maxautsize depth",
             description = "Random experiment parameters. A random synchronization tree of a given depth " +
             "is created in such a way that every inner node has a number of children uniformly chosen from [minbf,maxbf] " +
@@ -55,7 +58,7 @@ public class GSQ implements Callable<Integer> {
             int maxautsize = randomOptions[3];
             int depth = randomOptions[4];
 
-            nr = RandomNetGenerator.DFSNetGen(minbf, maxbf, depth, minautsize, maxautsize);
+            nr = RandomNetGenerator.DFSNetGen(minbf, maxbf, depth, minautsize, maxautsize, liveReset);
             System.out.println(String.format("** I have generated a random automata network with branching factor in [%d %d], " +
                     "automaton size in [%d %d] and depth %d **", minbf, maxbf, minautsize, maxautsize, depth));
             if (verbose) System.out.println(nr);
