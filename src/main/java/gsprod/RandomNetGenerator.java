@@ -21,7 +21,7 @@ public class RandomNetGenerator {
         net.getActions().addAll(syncDownActs);
 
         if (depth > 0)
-            for (String deeperPrefix : syncDownActs)
+            for (String deeperPrefix: syncDownActs)
                 DFSNetGen(deeperPrefix, minBranchingFactor, maxBranchingFactor, depth - 1, gen, net, rng);
     }
 

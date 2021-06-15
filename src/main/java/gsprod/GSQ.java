@@ -24,6 +24,9 @@ public class GSQ implements Callable<Integer> {
     @Option(names = {"-v", "--verbose"}, description = "Verbose: if true then output all models to stdout.")
     boolean verbose;
 
+    @Option(names = {"-o", "--only-dump"}, description = "Only dump the model files, don't reduce (works only with -d).")
+    boolean dumpOnly;
+
     @Option(names = "-r", arity = "5", hideParamSyntax = true, paramLabel = "minbf maxbf minautsize maxautsize depth",
             description = "Random experiment parameters. A random synchronization tree of a given depth " +
             "is created in such a way that every inner node has a number of children uniformly chosen from [minbf,maxbf] " +
@@ -57,6 +60,7 @@ public class GSQ implements Callable<Integer> {
                     "automaton size in [%d %d] and depth %d **", minbf, maxbf, minautsize, maxautsize, depth));
             if (verbose) System.out.println(nr);
             if (dumpFname != null) nr.dumpFile(dumpFname);
+            if (dumpOnly) return 0;
 
         } else {
             // *** reading actions and automata from files ***
