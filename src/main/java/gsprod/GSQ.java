@@ -30,6 +30,10 @@ public class GSQ implements Callable<Integer> {
             "and the number of states of each generated automaton is in [minautsize, maxautsize].")
     int[] randomOptions;
 
+    @Option(arity = "1", names = {"-d", "--dump"}, hideParamSyntax = true, paramLabel = "modelFilePrefix",
+            description = "Dump: save randomly generated net to files.")
+    String dumpFname;
+
     @Spec CommandSpec spec;
 
     public Integer call() throws Exception {
@@ -52,6 +56,8 @@ public class GSQ implements Callable<Integer> {
             System.out.println(String.format("** I have generated a random automata network with branching factor in [%d %d], " +
                     "automaton size in [%d %d] and depth %d **", minbf, maxbf, minautsize, maxautsize, depth));
             if (verbose) System.out.println(nr);
+            if (dumpFname != null) nr.dumpFile(dumpFname);
+
         } else {
             // *** reading actions and automata from files ***
             nr = new AutomataNet();

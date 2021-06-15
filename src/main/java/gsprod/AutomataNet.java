@@ -3,6 +3,9 @@ package gsprod;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AutomataNet {
 
@@ -97,6 +100,40 @@ public class AutomataNet {
                 (p, t) -> p + (p.length()>0 ? ", " : "") + t);
 
         return str+".";
+    }
+
+    /**
+     * Save the network to files: namePrefixSync, namePrefixM1, namePrefixM2, ...
+     */
+    public void dumpFile(String namePrefix) {
+        try {
+            BufferedWriter actWriter = new BufferedWriter(new FileWriter(namePrefix + "Sync"));
+            for (String action: this.getActions()) actWriter.write(action+"\n");
+            actWriter.close();
+
+            for (Automaton automaton: this.getAutomata()) {
+                BufferedWriter autoWriter = new BufferedWriter(new FileWriter(namePrefix + "M" + automaton.getName()));
+                autoWriter.write("states\n");
+                for (String state: automaton.getStates()) autoWriter.write(state + "\n");
+                autoWriter.write("transitions\n");
+
+                ArrayList<Transition> transitions = new ArrayList<>();
+                for (String state: automaton.getStateToTransitions().keySet()) {
+                    transitions.addAll(automaton.getStateToTransitions().get(state));
+                }
+
+                // don't change commas or anything below or external tool won't parse it
+                for (Transition trans: transitions)
+                    System.out.println("(" + trans.getSource() + ", " + trans.getLabel() + " ," + trans.getTarget()+")");
+
+                autoWriter.close();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
     }
 
 }
