@@ -1,0 +1,6 @@
+states
+0
+1
+transitions
+(0, chooseF, 1)
+(1, chooseR, 0)
